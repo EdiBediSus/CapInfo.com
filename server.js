@@ -1,72 +1,27 @@
-import WebSocket from "ws";
 import express from "express";
-import fetch from "node-fetch";
+import WebSocket from "ws";
 
 const app = express();
-const server = app.listen(3000);
+const server = app.listen(process.env.PORT || 3000);
 const wss = new WebSocket.Server({ server });
 
-const users = new Map(); // userId -> { ws, fcmToken }
-
-const FCM_KEY = "YOUR_FIREBASE_SERVER_KEY";
+const clients = new Set();
 
 wss.on("connection", (ws) => {
-  let userId = null;
+  clients.add(ws);
 
-  ws.on("message", async (msg) => {
-    const data = JSON.parse(msg);
-
-    // User joins
-    if (data.type === "join") {
-      userId = data.userId;
-      users.set(userId, { ws, fcmToken: data.fcmToken });
-      return;
-    }
-
-    // New message
-    if (data.type === "message") {
-      const bubble = {
-        id: Date.now(),
-        text: data.text,
-        x: Math.random() * 300,
-        y: Math.random() * 600
-      };
-
-      // Send to online users
-      users.forEach((u) => {
-        if (u.ws.readyState === WebSocket.OPEN) {
-          u.ws.send(JSON.stringify({ type: "bubble", bubble }));
-        }
-      });
-
-      // Notify offline users
-      users.forEach((u) => {
-        if (u.ws.readyState !== WebSocket.OPEN && u.fcmToken) {
-          sendPush(u.fcmToken, data.text);
-        }
-      });
-    }
+  ws.on("message", (msg) => {
+    // Broadcast message to everyone
+    clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(msg.toString());
+      }
+    });
   });
 
   ws.on("close", () => {
-    if (userId) users.delete(userId);
+    clients.delete(ws);
   });
 });
 
-async function sendPush(token, text) {
-  await fetch("https://fcm.googleapis.com/fcm/send", {
-    method: "POST",
-    headers: {
-      "Authorization": `key=${FCM_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      to: token,
-      notification: {
-        title: "New Bubble 💬",
-        body: text
-      }
-    })
-  });
-}
-
+console.log("WebSocket server running");
