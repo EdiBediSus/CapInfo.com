@@ -1,56 +1,40 @@
 <!DOCTYPE html>
 <html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { margin:0; font-family:sans-serif; background:#111; color:white }
+#chat { height:80vh; overflow:auto; padding:10px }
+.msg { background:#4af; margin:5px; padding:8px; border-radius:10px }
+input { width:75% }
+button { width:20% }
+</style>
+</head>
 <body>
-<input id="msg" placeholder="Type..." />
+
+<div id="chat"></div>
+<input id="text" placeholder="Type message">
 <button onclick="send()">Send</button>
-<canvas id="c"></canvas>
 
 <script>
 const ws = new WebSocket("wss://capinfo-com.onrender.com");
-const canvas = document.getElementById("c");
-const ctx = canvas.getContext("2d");
-canvas.width = 360;
-canvas.height = 640;
-
-const bubbles = [];
-
-ws.onopen = () => {
-  ws.send(JSON.stringify({
-    type: "join",
-    userId: Math.random().toString(36).slice(2),
-    fcmToken: window.FCM_TOKEN || null
-  }));
-};
+const chat = document.getElementById("chat");
 
 ws.onmessage = (e) => {
-  const data = JSON.parse(e.data);
-  if (data.type === "bubble") {
-    bubbles.push(data.bubble);
-  }
+  const div = document.createElement("div");
+  div.className = "msg";
+  div.textContent = e.data;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 };
 
 function send() {
-  ws.send(JSON.stringify({
-    type: "message",
-    text: msg.value
-  }));
-  msg.value = "";
+  if (text.value.trim() !== "") {
+    ws.send(text.value);
+    text.value = "";
+  }
 }
-
-function draw() {
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  bubbles.forEach(b => {
-    ctx.beginPath();
-    ctx.arc(b.x, b.y, 30, 0, Math.PI*2);
-    ctx.fillStyle = "#4af";
-    ctx.fill();
-    ctx.fillStyle = "#000";
-    ctx.fillText(b.text, b.x-15, b.y);
-  });
-  requestAnimationFrame(draw);
-}
-draw();
 </script>
+
 </body>
 </html>
-
