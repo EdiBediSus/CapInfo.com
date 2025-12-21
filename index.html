@@ -14,14 +14,14 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        html, body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0A0E27;
-            height: 100vh;
-            height: 100dvh;
+            background: #075E54;
+            height: 100%;
+            width: 100%;
             overflow: hidden;
             position: fixed;
-            width: 100%;
+            overscroll-behavior: none;
         }
 
         .container {
@@ -30,47 +30,50 @@
             height: 100vh;
             height: 100dvh;
             width: 100%;
-            background: #0A0E27;
+            background: #E5DDD5;
         }
 
         .header {
-            background: linear-gradient(135deg, #6B4CE6 0%, #4834DF 100%);
+            background: #128C7E;
             color: white;
-            padding: max(env(safe-area-inset-top), 15px) 20px 15px 20px;
+            padding: max(env(safe-area-inset-top), 12px) 16px 12px 16px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            box-shadow: 0 2px 20px rgba(107, 76, 230, 0.3);
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             position: relative;
             z-index: 100;
+            min-height: 60px;
         }
 
         .header-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 26px;
             backdrop-filter: blur(10px);
+            flex-shrink: 0;
         }
 
         .header-content {
             flex: 1;
+            min-width: 0;
         }
 
         .header h1 {
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 500;
             margin-bottom: 2px;
-            letter-spacing: -0.3px;
+            letter-spacing: 0;
         }
 
         .status {
             font-size: 14px;
-            opacity: 0.85;
+            opacity: 0.9;
             font-weight: 400;
         }
 
@@ -78,9 +81,11 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 15px;
-            background: #0A0E27;
+            padding: 16px 12px;
+            background: #E5DDD5;
             -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            position: relative;
         }
 
         .messages::-webkit-scrollbar {
@@ -88,20 +93,21 @@
         }
 
         .message {
-            margin-bottom: 12px;
-            animation: slideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 8px;
+            animation: slideIn 0.2s ease-out;
             display: flex;
             flex-direction: column;
+            clear: both;
         }
 
         @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(15px) scale(0.95);
+                transform: translateY(10px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
 
@@ -114,113 +120,115 @@
         }
 
         .message-bubble {
-            max-width: 75%;
-            padding: 12px 16px;
-            border-radius: 20px;
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 8px;
             word-wrap: break-word;
             position: relative;
-            backdrop-filter: blur(20px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
         }
 
         .message.other .message-bubble {
-            background: linear-gradient(135deg, #1E2542 0%, #252B48 100%);
-            color: #FFFFFF;
-            border-bottom-left-radius: 4px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+            background: white;
+            color: #000;
+            border-top-left-radius: 0;
         }
 
         .message.own .message-bubble {
-            background: linear-gradient(135deg, #6B4CE6 0%, #5A3FD8 100%);
-            color: white;
-            border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 15px rgba(107, 76, 230, 0.4);
+            background: #DCF8C6;
+            color: #000;
+            border-top-right-radius: 0;
         }
 
         .message-user {
             font-size: 13px;
             margin-bottom: 4px;
             font-weight: 600;
-            opacity: 0.8;
+            color: #128C7E;
             padding: 0 4px;
         }
 
         .message-text {
-            line-height: 1.4;
-            font-size: 17px;
+            line-height: 1.5;
+            font-size: 16px;
+            word-wrap: break-word;
+            white-space: pre-wrap;
         }
 
         .message-time {
-            font-size: 12px;
-            opacity: 0.6;
+            font-size: 11px;
+            opacity: 0.5;
             margin-top: 4px;
             text-align: right;
+            float: right;
+            margin-left: 8px;
         }
 
         .drawing-preview {
             display: block;
             max-width: 100%;
-            border-radius: 12px;
+            border-radius: 8px;
             margin-top: 4px;
         }
 
         .input-area {
             display: flex;
-            padding: 12px 15px;
-            padding-bottom: max(env(safe-area-inset-bottom), 12px);
-            background: #12162E;
+            padding: 8px 8px;
+            padding-bottom: max(env(safe-area-inset-bottom), 8px);
+            background: #F0F0F0;
             gap: 8px;
-            align-items: center;
-            border-top: 1px solid rgba(107, 76, 230, 0.2);
+            align-items: flex-end;
+            border-top: 1px solid #D1D1D1;
         }
 
         .input-wrapper {
             flex: 1;
             display: flex;
             align-items: center;
-            background: #1E2542;
-            border-radius: 25px;
+            background: white;
+            border-radius: 24px;
             padding: 0 16px;
-            border: 1px solid rgba(107, 76, 230, 0.3);
+            border: 1px solid #D1D1D1;
+            min-height: 48px;
         }
 
         .input-area input {
             flex: 1;
-            padding: 14px 0;
+            padding: 12px 0;
             border: none;
             background: transparent;
             font-size: 17px;
             outline: none;
-            color: white;
+            color: #000;
         }
 
         .input-area input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: #999;
         }
 
         .btn {
-            width: 50px;
-            height: 50px;
-            min-width: 50px;
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
             border: none;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 24px;
+            font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.15s, box-shadow 0.15s;
-            background: linear-gradient(135deg, #6B4CE6 0%, #5A3FD8 100%);
+            transition: transform 0.1s;
+            background: #128C7E;
             color: white;
-            box-shadow: 0 4px 15px rgba(107, 76, 230, 0.4);
+            flex-shrink: 0;
         }
 
         .btn:active {
-            transform: scale(0.9);
+            transform: scale(0.92);
         }
 
         .draw-btn {
-            background: linear-gradient(135deg, #00D4FF 0%, #0099FF 100%);
-            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);
+            background: #25D366;
         }
 
         .canvas-modal {
@@ -231,7 +239,7 @@
             width: 100%;
             height: 100vh;
             height: 100dvh;
-            background: #0A0E27;
+            background: #075E54;
             z-index: 1000;
             flex-direction: column;
         }
@@ -241,29 +249,30 @@
         }
 
         .canvas-header {
-            padding: max(env(safe-area-inset-top), 15px) 20px 15px 20px;
-            background: linear-gradient(135deg, #6B4CE6 0%, #4834DF 100%);
+            padding: max(env(safe-area-inset-top), 12px) 16px 12px 16px;
+            background: #128C7E;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 20px rgba(107, 76, 230, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            min-height: 60px;
         }
 
         .canvas-header h2 {
             color: white;
-            font-size: 22px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 500;
         }
 
         .canvas-controls {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         .color-btn {
-            width: 38px;
-            height: 38px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 42px;
+            height: 42px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             cursor: pointer;
             transition: transform 0.15s, border-color 0.15s;
@@ -272,7 +281,8 @@
 
         .color-btn.active {
             border-color: white;
-            transform: scale(1.15);
+            transform: scale(1.1);
+            box-shadow: 0 2px 12px rgba(255, 255, 255, 0.5);
         }
 
         .canvas-container {
@@ -282,36 +292,37 @@
             align-items: center;
             padding: 20px;
             overflow: hidden;
+            background: #E5DDD5;
         }
 
         canvas {
             background: white;
-            border-radius: 16px;
+            border-radius: 12px;
             touch-action: none;
             max-width: 100%;
             max-height: 100%;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
 
         .canvas-footer {
-            padding: 15px;
-            padding-bottom: max(env(safe-area-inset-bottom), 15px);
+            padding: 12px 16px;
+            padding-bottom: max(env(safe-area-inset-bottom), 12px);
             display: flex;
             gap: 10px;
             justify-content: center;
-            background: #12162E;
+            background: #F0F0F0;
         }
 
         .modal-btn {
-            padding: 16px 32px;
+            padding: 14px 24px;
             border: none;
-            border-radius: 25px;
-            font-size: 17px;
+            border-radius: 24px;
+            font-size: 16px;
             cursor: pointer;
-            font-weight: 600;
-            transition: transform 0.15s;
+            font-weight: 500;
+            transition: transform 0.1s;
             flex: 1;
-            max-width: 150px;
+            max-width: 140px;
         }
 
         .modal-btn:active {
@@ -319,57 +330,18 @@
         }
 
         .cancel-btn {
-            background: #2D3555;
-            color: white;
+            background: #E0E0E0;
+            color: #333;
         }
 
         .send-drawing-btn {
-            background: linear-gradient(135deg, #6B4CE6 0%, #5A3FD8 100%);
+            background: #128C7E;
             color: white;
-            box-shadow: 0 4px 15px rgba(107, 76, 230, 0.4);
         }
 
         .clear-btn {
             background: #FF6B6B;
             color: white;
-        }
-
-        .typing-indicator {
-            display: none;
-            align-items: center;
-            gap: 4px;
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #1E2542 0%, #252B48 100%);
-            border-radius: 20px;
-            width: fit-content;
-            margin-bottom: 12px;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-            30% {
-                transform: translateY(-10px);
-                opacity: 1;
-            }
         }
     </style>
 </head>
@@ -383,18 +355,12 @@
             </div>
         </div>
 
-        <div class="messages" id="messages">
-            <div class="typing-indicator" id="typingIndicator">
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            </div>
-        </div>
+        <div class="messages" id="messages"></div>
 
         <div class="input-area">
             <button class="btn draw-btn" id="drawBtn">✏️</button>
             <div class="input-wrapper">
-                <input type="text" id="messageInput" placeholder="Message..." autocomplete="off" />
+                <input type="text" id="messageInput" placeholder="Message" autocomplete="off" />
             </div>
             <button class="btn" id="sendBtn">➤</button>
         </div>
@@ -405,10 +371,10 @@
             <h2>Draw Something</h2>
             <div class="canvas-controls">
                 <button class="color-btn active" style="background: black;" data-color="black"></button>
-                <button class="color-btn" style="background: #6B4CE6;" data-color="#6B4CE6"></button>
+                <button class="color-btn" style="background: #128C7E;" data-color="#128C7E"></button>
                 <button class="color-btn" style="background: #FF6B6B;" data-color="#FF6B6B"></button>
-                <button class="color-btn" style="background: #00D4FF;" data-color="#00D4FF"></button>
-                <button class="color-btn" style="background: #FFD93D;" data-color="#FFD93D"></button>
+                <button class="color-btn" style="background: #25D366;" data-color="#25D366"></button>
+                <button class="color-btn" style="background: #FFD700;" data-color="#FFD700"></button>
             </div>
         </div>
         <div class="canvas-container">
@@ -443,10 +409,29 @@
         const cancelBtn = document.getElementById('cancelBtn');
         const sendDrawingBtn = document.getElementById('sendDrawingBtn');
 
-        // Prevent pull-to-refresh and zoom
+        // Fix scrolling on mobile
+        let lastTouchY = 0;
+        
+        messagesDiv.addEventListener('touchstart', function(e) {
+            lastTouchY = e.touches[0].clientY;
+        }, { passive: true });
+
+        messagesDiv.addEventListener('touchmove', function(e) {
+            const touchY = e.touches[0].clientY;
+            const scrollTop = messagesDiv.scrollTop;
+            const scrollHeight = messagesDiv.scrollHeight;
+            const height = messagesDiv.clientHeight;
+            const delta = lastTouchY - touchY;
+
+            if ((scrollTop <= 0 && delta < 0) || (scrollTop + height >= scrollHeight && delta > 0)) {
+                e.preventDefault();
+            }
+            lastTouchY = touchY;
+        }, { passive: false });
+
         document.body.addEventListener('touchmove', function(e) {
             if (e.target === canvas) return;
-            if (e.scale !== 1) e.preventDefault();
+            e.preventDefault();
         }, { passive: false });
 
         // Connect to WebSocket
@@ -455,7 +440,7 @@
                 ws = new WebSocket(SERVER_URL);
                 
                 ws.onopen = () => {
-                    statusDiv.textContent = 'Online';
+                    statusDiv.textContent = 'online';
                     console.log('Connected to server');
                 };
 
@@ -466,16 +451,16 @@
 
                 ws.onerror = (error) => {
                     console.error('WebSocket error:', error);
-                    statusDiv.textContent = 'Connection Error';
+                    statusDiv.textContent = 'connection error';
                 };
 
                 ws.onclose = () => {
-                    statusDiv.textContent = 'Reconnecting...';
+                    statusDiv.textContent = 'connecting...';
                     setTimeout(connect, 3000);
                 };
             } catch (error) {
                 console.error('Connection error:', error);
-                statusDiv.textContent = 'Unable to connect';
+                statusDiv.textContent = 'unable to connect';
             }
         }
 
@@ -494,17 +479,25 @@
             if (data.type === 'drawing') {
                 content += `<img src="${data.message}" class="drawing-preview" alt="Drawing" />`;
             } else {
-                content += `<div class="message-text">${data.message}</div>`;
+                content += `<div class="message-text">${data.message}`;
             }
             
             const now = new Date();
             const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-            content += `<div class="message-time">${timeStr}</div>`;
+            content += `<span class="message-time">${timeStr}</span>`;
+            
+            if (data.type !== 'drawing') {
+                content += '</div>';
+            }
+            
             content += '</div>';
             
             messageDiv.innerHTML = content;
             messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            
+            setTimeout(() => {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }, 50);
         }
 
         // Send message
@@ -521,7 +514,7 @@
         }
 
         // Canvas setup
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
@@ -583,7 +576,10 @@
         // Event listeners
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
         });
 
         drawBtn.addEventListener('click', () => {
