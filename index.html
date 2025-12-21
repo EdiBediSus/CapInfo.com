@@ -1,29 +1,55 @@
-
+<!DOCTYPE html>
 <html>
-<head>
-<title> TUTPEIALE </title>
-</head>
-<body bgcolor="Yellow">
-<h1> Top 5 capybaras </h1>
-<h2> top 5 Capybaras </h2>
-<hr>
-<img src="capy.jpg">
-<a href="left.html"<button> credits </button> </a <br> <br>
+<body>
+<input id="msg" placeholder="Type..." />
+<button onclick="send()">Send</button>
+<canvas id="c"></canvas>
 
-<a href="right.html"<button> Links </button> </a
+<script>
+const ws = new WebSocket("wss://YOUR_SERVER_URL");
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+canvas.width = 360;
+canvas.height = 640;
 
-<ol> 
-<li> spin capybara </li>
-<li> Swim capybara </li>
-<li> Icecream capybara </li>
-<li> iglu capybara </li>
-<li> car  capybara </li>
-</ol>
-<hr>
-<H1> Capybara information </h1> <br> <br>
-<p> They live in Soth America and they're the biggest rats </p> 
-<p> They are friendly with other animals </p> 
-<img src="friendly capy.jpg">
-<hr>
+const bubbles = [];
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({
+    type: "join",
+    userId: Math.random().toString(36).slice(2),
+    fcmToken: window.FCM_TOKEN || null
+  }));
+};
+
+ws.onmessage = (e) => {
+  const data = JSON.parse(e.data);
+  if (data.type === "bubble") {
+    bubbles.push(data.bubble);
+  }
+};
+
+function send() {
+  ws.send(JSON.stringify({
+    type: "message",
+    text: msg.value
+  }));
+  msg.value = "";
+}
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  bubbles.forEach(b => {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, 30, 0, Math.PI*2);
+    ctx.fillStyle = "#4af";
+    ctx.fill();
+    ctx.fillStyle = "#000";
+    ctx.fillText(b.text, b.x-15, b.y);
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
 </body>
 </html>
