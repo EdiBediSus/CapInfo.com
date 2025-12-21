@@ -121,11 +121,11 @@
 
         .message-bubble {
             max-width: 80%;
-            padding: 22px 30px;
-            border-radius: 20px;
+            padding: 14px 20px;
+            border-radius: 16px;
             word-wrap: break-word;
             position: relative;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
         }
 
         .message.other .message-bubble {
@@ -141,28 +141,28 @@
         }
 
         .message-user {
-            font-size: 28px;
-            margin-bottom: 10px;
+            font-size: 20px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: #0084FF;
-            padding: 0 8px;
+            padding: 0 6px;
         }
 
         .message-text {
             line-height: 1.5;
-            font-size: 40px;
+            font-size: 28px;
             word-wrap: break-word;
             white-space: pre-wrap;
             font-weight: 400;
         }
 
         .message-time {
-            font-size: 22px;
+            font-size: 16px;
             opacity: 0.5;
-            margin-top: 10px;
+            margin-top: 6px;
             text-align: right;
             float: right;
-            margin-left: 16px;
+            margin-left: 10px;
         }
 
         .drawing-preview {
@@ -174,10 +174,10 @@
 
         .input-area {
             display: flex;
-            padding: 20px 18px;
-            padding-bottom: max(env(safe-area-inset-bottom), 20px);
+            padding: 15px 15px;
+            padding-bottom: max(env(safe-area-inset-bottom), 15px);
             background: #F0F0F0;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             border-top: 1px solid #D1D1D1;
         }
@@ -187,26 +187,27 @@
             display: flex;
             align-items: center;
             background: white;
-            border-radius: 70px;
-            padding: 0 40px;
+            border-radius: 30px;
+            padding: 0 24px;
             border: 2px solid #D1D1D1;
-            min-height: 140px;
+            height: 60px;
         }
 
         .input-area input {
             flex: 1;
-            padding: 35px 0;
+            padding: 0;
             border: none;
             background: transparent;
-            font-size: 36px;
+            font-size: 28px;
             outline: none;
             color: #000;
             font-weight: 400;
+            line-height: 60px;
         }
 
         .input-area input::placeholder {
             color: #999;
-            font-size: 36px;
+            font-size: 28px;
         }
 
 
