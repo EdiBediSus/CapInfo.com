@@ -2,21 +2,22 @@ import express from "express";
 import WebSocket from "ws";
 
 const app = express();
-const server = app.listen(process.env.PORT || 3000);
-const wss = new WebSocket.Server({ server });
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT);
 
+const wss = new WebSocket.Server({ server });
 const clients = new Set();
 
 wss.on("connection", (ws) => {
   clients.add(ws);
 
-  ws.on("message", (msg) => {
-    // Broadcast message to everyone
-    clients.forEach(client => {
+  ws.on("message", (data) => {
+    // Broadcast to everyone
+    for (const client of clients) {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(msg.toString());
+        client.send(data.toString());
       }
-    });
+    }
   });
 
   ws.on("close", () => {
@@ -24,4 +25,4 @@ wss.on("connection", (ws) => {
   });
 });
 
-console.log("WebSocket server running");
+console.log("✅ WebSocket server running on port", PORT);
