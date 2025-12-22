@@ -182,10 +182,61 @@
         .drawing-preview {
             display: block;
             max-width: 100%;
-            max-height: 400px;
+            max-height: 500px;
             border-radius: 12px;
             margin-top: 6px;
             object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .drawing-preview:active {
+            transform: scale(0.98);
+        }
+
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            touch-action: pan-x pan-y pinch-zoom;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: max(env(safe-area-inset-top), 20px);
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
         }
 
         .input-area {
@@ -205,10 +256,10 @@
             display: flex;
             align-items: center;
             background: #F5F5F5;
-            border-radius: 32px;
-            padding: 0 20px;
+            border-radius: 38px;
+            padding: 0 24px;
             border: 2px solid #E0E0E0;
-            height: 64px;
+            height: 76px;
         }
 
         .input-area input {
@@ -216,16 +267,16 @@
             padding: 0;
             border: none;
             background: transparent;
-            font-size: 28px;
+            font-size: 30px;
             outline: none;
             color: #000;
             font-weight: 500;
-            line-height: 64px;
+            line-height: 76px;
         }
 
         .input-area input::placeholder {
             color: #999;
-            font-size: 28px;
+            font-size: 30px;
             font-weight: 400;
         }
 
@@ -405,8 +456,13 @@
                 <input type="text" id="messageInput" placeholder="Message" autocomplete="off" />
             </div>
             <button class="btn" id="sendBtn">➤</button>
-            <input type="file" id="photoInput" class="photo-input" accept="image/*" capture="environment" />
+            <input type="file" id="photoInput" class="photo-input" accept="image/*" />
         </div>
+    </div>
+
+    <div class="image-modal" id="imageModal">
+        <button class="close-modal" id="closeModal">✕</button>
+        <img id="modalImage" src="" alt="Zoomed image" />
     </div>
 
     <div class="canvas-modal" id="canvasModal">
@@ -453,6 +509,9 @@
         const clearBtn = document.getElementById('clearBtn');
         const cancelBtn = document.getElementById('cancelBtn');
         const sendDrawingBtn = document.getElementById('sendDrawingBtn');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.getElementById('closeModal');
 
         // Prevent all body scrolling
         document.body.addEventListener('touchmove', function(e) {
@@ -519,10 +578,8 @@
             
             content += '<div class="message-bubble">';
             
-            if (data.type === 'drawing') {
-                content += `<img src="${data.message}" class="drawing-preview" alt="Drawing" />`;
-            } else if (data.type === 'photo') {
-                content += `<img src="${data.message}" class="drawing-preview" alt="Photo" />`;
+            if (data.type === 'drawing' || data.type === 'photo') {
+                content += `<img src="${data.message}" class="drawing-preview" alt="${data.type === 'photo' ? 'Photo' : 'Drawing'}" onclick="openImageModal('${data.message}')" />`;
             } else {
                 content += `<div class="message-text">${data.message}`;
             }
@@ -645,14 +702,48 @@
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    const imageData = event.target.result;
-                    if (ws && ws.readyState === WebSocket.OPEN) {
-                        ws.send(JSON.stringify({
-                            user: username,
-                            message: imageData,
-                            type: 'photo'
-                        }));
-                    }
+                    const img = new Image();
+                    img.onload = function() {
+                        // Create canvas to resize/optimize image
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Max dimensions for mobile
+                        const maxWidth = 1200;
+                        const maxHeight = 1200;
+                        
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to base64 with compression
+                        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+                        
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(JSON.stringify({
+                                user: username,
+                                message: imageData,
+                                type: 'photo'
+                            }));
+                        }
+                    };
+                    img.src = event.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -663,6 +754,25 @@
             canvasModal.classList.remove('active');
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
+
+        // Image zoom modal functions
+        function openImageModal(src) {
+            modalImage.src = src;
+            imageModal.classList.add('active');
+        }
+
+        closeModal.addEventListener('click', () => {
+            imageModal.classList.remove('active');
+        });
+
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+            }
+        });
+
+        // Make openImageModal available globally
+        window.openImageModal = openImageModal;
 
         clearBtn.addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
