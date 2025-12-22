@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>Bubble Chat</title>
@@ -15,10 +15,8 @@
         }
 
         html {
-            position: fixed;
             height: 100%;
             width: 100%;
-            overflow: hidden;
         }
 
         body {
@@ -26,17 +24,16 @@
             background: #0A1628;
             height: 100%;
             width: 100%;
-            overflow: hidden;
-            position: fixed;
+            margin: 0;
+            padding: 0;
             overscroll-behavior: none;
-            touch-action: pan-y;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            height: 100dvh;
+            min-height: 100vh;
+            min-height: 100dvh;
             width: 100%;
             background: linear-gradient(180deg, #E8F0FE 0%, #D6E4FF 100%);
             position: relative;
