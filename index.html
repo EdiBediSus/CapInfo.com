@@ -132,8 +132,8 @@
 
         .message-bubble {
             max-width: 85%;
-            padding: 16px 20px;
-            border-radius: 20px;
+            padding: 10px 14px;
+            border-radius: 18px;
             word-wrap: break-word;
             position: relative;
             box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
@@ -154,8 +154,8 @@
         }
 
         .message-user {
-            font-size: 18px;
-            margin-bottom: 6px;
+            font-size: 14px;
+            margin-bottom: 4px;
             font-weight: 700;
             color: #1976D2;
             padding: 0 4px;
@@ -163,19 +163,19 @@
 
         .message-text {
             line-height: 1.4;
-            font-size: 32px;
+            font-size: 18px;
             word-wrap: break-word;
             white-space: pre-wrap;
             font-weight: 500;
         }
 
         .message-time {
-            font-size: 18px;
+            font-size: 12px;
             opacity: 0.65;
-            margin-top: 8px;
+            margin-top: 4px;
             text-align: right;
             float: right;
-            margin-left: 12px;
+            margin-left: 8px;
             font-weight: 500;
         }
 
@@ -491,7 +491,7 @@
                 <input type="text" id="messageInput" placeholder="Message" autocomplete="off" />
             </div>
             <button class="btn" id="sendBtn">➤</button>
-            <input type="file" id="mediaInput" class="photo-input" accept="image/*,video/*" />
+            <input type="file" id="mediaInput" class="photo-input" accept="image/*,video/*" capture="environment" />
             <input type="file" id="audioInput" class="audio-input" accept="audio/*" />
         </div>
     </div>
@@ -736,20 +736,29 @@
 
         // Media button handler (photos and videos)
         mediaBtn.addEventListener('click', () => {
+            // Remove capture attribute to prefer gallery
+            mediaInput.removeAttribute('capture');
             mediaInput.click();
         });
 
         mediaInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (!file) return;
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+            
+            console.log('File selected:', file.name, file.type, file.size);
             
             // Handle images
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
+                    console.log('Image loaded, processing...');
                     const img = new Image();
                     img.onload = function() {
                         try {
+                            console.log('Image dimensions:', img.width, 'x', img.height);
                             const canvas = document.createElement('canvas');
                             const ctx = canvas.getContext('2d');
                             
@@ -776,6 +785,7 @@
                             ctx.drawImage(img, 0, 0, width, height);
                             
                             const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                            console.log('Image processed, sending...');
                             
                             if (ws && ws.readyState === WebSocket.OPEN) {
                                 ws.send(JSON.stringify({
@@ -783,26 +793,31 @@
                                     message: imageData,
                                     type: 'photo'
                                 }));
+                                console.log('Photo sent successfully!');
+                            } else {
+                                console.error('WebSocket not connected');
+                                alert('Not connected to server. Please wait and try again.');
                             }
                         } catch (error) {
                             console.error('Error processing image:', error);
                             alert('Failed to process image. Please try a smaller photo.');
                         }
                     };
-                    img.onerror = function() {
-                        console.error('Error loading image');
+                    img.onerror = function(err) {
+                        console.error('Error loading image:', err);
                         alert('Failed to load image. Please try another photo.');
                     };
                     img.src = event.target.result;
                 };
-                reader.onerror = function() {
-                    console.error('Error reading file');
+                reader.onerror = function(err) {
+                    console.error('Error reading file:', err);
                     alert('Failed to read file. Please try again.');
                 };
                 reader.readAsDataURL(file);
             }
             // Handle videos
             else if (file.type.startsWith('video/')) {
+                console.log('Processing video...');
                 if (file.size > 50 * 1024 * 1024) {
                     alert('Video is too large. Please choose a video under 50MB.');
                     mediaInput.value = '';
@@ -812,16 +827,21 @@
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const videoData = event.target.result;
+                    console.log('Video loaded, sending...');
                     if (ws && ws.readyState === WebSocket.OPEN) {
                         ws.send(JSON.stringify({
                             user: username,
                             message: videoData,
                             type: 'video'
                         }));
+                        console.log('Video sent successfully!');
+                    } else {
+                        console.error('WebSocket not connected');
+                        alert('Not connected to server. Please wait and try again.');
                     }
                 };
-                reader.onerror = function() {
-                    console.error('Error reading video file');
+                reader.onerror = function(err) {
+                    console.error('Error reading video file:', err);
                     alert('Failed to read video. Please try again.');
                 };
                 reader.readAsDataURL(file);
