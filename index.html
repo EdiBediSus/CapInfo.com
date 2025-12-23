@@ -2,11 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="format-detection" content="telephone=no">
     <title>Bubble Chat</title>
     <style>
         * {
@@ -17,8 +15,10 @@
         }
 
         html {
+            position: fixed;
             height: 100%;
             width: 100%;
+            overflow: hidden;
         }
 
         body {
@@ -26,16 +26,17 @@
             background: #0A1628;
             height: 100%;
             width: 100%;
-            margin: 0;
-            padding: 0;
+            overflow: hidden;
+            position: fixed;
             overscroll-behavior: none;
+            touch-action: pan-y;
         }
 
         .container {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            min-height: 100dvh;
+            height: 100vh;
+            height: 100dvh;
             width: 100%;
             background: linear-gradient(180deg, #E8F0FE 0%, #D6E4FF 100%);
             position: relative;
@@ -44,24 +45,25 @@
         .header {
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
             color: white;
-            padding: max(env(safe-area-inset-top), 12px) 16px 12px 16px;
+            padding: max(env(safe-area-inset-top), 16px) 20px 16px 20px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
             box-shadow: 0 4px 20px rgba(33, 150, 243, 0.3);
             position: relative;
             z-index: 100;
+            min-height: 80px;
         }
 
         .header-icon {
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             background: rgba(255, 255, 255, 0.25);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 36px;
             backdrop-filter: blur(10px);
             flex-shrink: 0;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -73,14 +75,14 @@
         }
 
         .header h1 {
-            font-size: 20px;
+            font-size: 28px;
             font-weight: 600;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
             letter-spacing: -0.5px;
         }
 
         .status {
-            font-size: 13px;
+            font-size: 16px;
             opacity: 0.9;
             font-weight: 400;
         }
@@ -89,7 +91,7 @@
             flex: 1;
             overflow-y: scroll;
             overflow-x: hidden;
-            padding: 16px 12px;
+            padding: 20px 16px;
             background: linear-gradient(180deg, #E8F0FE 0%, #D6E4FF 100%);
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
@@ -102,7 +104,7 @@
         }
 
         .message {
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             animation: slideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -130,11 +132,11 @@
 
         .message-bubble {
             max-width: 85%;
-            padding: 12px 16px;
-            border-radius: 18px;
+            padding: 16px 20px;
+            border-radius: 20px;
             word-wrap: break-word;
             position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(10px);
         }
 
@@ -148,12 +150,12 @@
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
             color: white;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 2px 10px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 3px 15px rgba(33, 150, 243, 0.4);
         }
 
         .message-user {
-            font-size: 13px;
-            margin-bottom: 4px;
+            font-size: 18px;
+            margin-bottom: 6px;
             font-weight: 700;
             color: #1976D2;
             padding: 0 4px;
@@ -161,28 +163,28 @@
 
         .message-text {
             line-height: 1.4;
-            font-size: 16px;
+            font-size: 32px;
             word-wrap: break-word;
             white-space: pre-wrap;
             font-weight: 500;
         }
 
         .message-time {
-            font-size: 11px;
+            font-size: 18px;
             opacity: 0.65;
-            margin-top: 6px;
+            margin-top: 8px;
             text-align: right;
             float: right;
-            margin-left: 10px;
+            margin-left: 12px;
             font-weight: 500;
         }
 
         .drawing-preview {
             display: block;
             max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
-            margin-top: 4px;
+            max-height: 500px;
+            border-radius: 12px;
+            margin-top: 6px;
             object-fit: contain;
             cursor: pointer;
             transition: transform 0.2s;
@@ -190,6 +192,23 @@
 
         .drawing-preview:active {
             transform: scale(0.98);
+        }
+
+        .video-preview {
+            display: block;
+            max-width: 100%;
+            max-height: 500px;
+            border-radius: 12px;
+            margin-top: 6px;
+            background: #000;
+        }
+
+        .audio-preview {
+            display: block;
+            width: 100%;
+            max-width: 350px;
+            margin-top: 6px;
+            border-radius: 12px;
         }
 
         .image-modal {
@@ -223,13 +242,13 @@
             position: absolute;
             top: max(env(safe-area-inset-top), 20px);
             right: 20px;
-            width: 44px;
-            height: 44px;
+            width: 50px;
+            height: 50px;
             background: rgba(255, 255, 255, 0.2);
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 24px;
+            font-size: 30px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -239,10 +258,10 @@
 
         .input-area {
             display: flex;
-            padding: 10px 8px;
-            padding-bottom: max(env(safe-area-inset-bottom), 10px);
+            padding: 14px 8px;
+            padding-bottom: max(env(safe-area-inset-bottom), 14px);
             background: rgba(255, 255, 255, 0.95);
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             border-top: 1px solid rgba(33, 150, 243, 0.2);
             box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
@@ -254,10 +273,10 @@
             display: flex;
             align-items: center;
             background: #F5F5F5;
-            border-radius: 22px;
-            padding: 0 16px;
+            border-radius: 38px;
+            padding: 0 24px;
             border: 2px solid #E0E0E0;
-            height: 44px;
+            height: 76px;
         }
 
         .input-area input {
@@ -265,27 +284,28 @@
             padding: 0;
             border: none;
             background: transparent;
-            font-size: 16px;
+            font-size: 30px;
             outline: none;
             color: #000;
             font-weight: 500;
+            line-height: 76px;
         }
 
         .input-area input::placeholder {
             color: #999;
-            font-size: 16px;
+            font-size: 30px;
             font-weight: 400;
         }
 
         .btn {
-            width: 44px;
-            height: 44px;
-            min-width: 44px;
-            min-height: 44px;
+            width: 135px;
+            height: 135px;
+            min-width: 135px;
+            min-height: 135px;
             border: none;
-            border-radius: 22px;
+            border-radius: 67.5px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 62px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -293,25 +313,39 @@
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
             color: white;
             flex-shrink: 0;
-            box-shadow: 0 3px 10px rgba(33, 150, 243, 0.5);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
         }
 
         .btn:active {
             transform: scale(0.92);
-            box-shadow: 0 2px 6px rgba(33, 150, 243, 0.5);
+            box-shadow: 0 3px 10px rgba(33, 150, 243, 0.5);
         }
 
         .draw-btn {
             background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
-            box-shadow: 0 3px 10px rgba(0, 188, 212, 0.5);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.5);
         }
 
         .photo-btn {
             background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
-            box-shadow: 0 3px 10px rgba(156, 39, 176, 0.5);
+            box-shadow: 0 6px 20px rgba(156, 39, 176, 0.5);
+        }
+
+        .video-btn {
+            background: linear-gradient(135deg, #FF5722 0%, #E64A19 100%);
+            box-shadow: 0 6px 20px rgba(255, 87, 34, 0.5);
+        }
+
+        .audio-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #388E3C 100%);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
         }
 
         .photo-input {
+            display: none;
+        }
+
+        .audio-input {
             display: none;
         }
 
@@ -333,39 +367,40 @@
         }
 
         .canvas-header {
-            padding: max(env(safe-area-inset-top), 12px) 16px 12px 16px;
+            padding: max(env(safe-area-inset-top), 16px) 20px 16px 20px;
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+            min-height: 80px;
         }
 
         .canvas-header h2 {
             color: white;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: 600;
         }
 
         .canvas-controls {
             display: flex;
-            gap: 8px;
+            gap: 14px;
         }
 
         .color-btn {
-            width: 36px;
-            height: 36px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             cursor: pointer;
             transition: transform 0.15s, border-color 0.15s;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
         }
 
         .color-btn.active {
             border-color: white;
             transform: scale(1.15);
-            box-shadow: 0 3px 12px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.5);
         }
 
         .canvas-container {
@@ -373,14 +408,14 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 30px;
             overflow: hidden;
             background: linear-gradient(180deg, #E8F0FE 0%, #D6E4FF 100%);
         }
 
         canvas {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             touch-action: none;
             max-width: 100%;
             max-height: 100%;
@@ -390,25 +425,25 @@
         }
 
         .canvas-footer {
-            padding: 12px 16px;
-            padding-bottom: max(env(safe-area-inset-bottom), 12px);
+            padding: 18px 20px;
+            padding-bottom: max(env(safe-area-inset-bottom), 18px);
             display: flex;
-            gap: 10px;
+            gap: 14px;
             justify-content: center;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
         }
 
         .modal-btn {
-            padding: 12px 24px;
+            padding: 26px 46px;
             border: none;
-            border-radius: 24px;
-            font-size: 16px;
+            border-radius: 40px;
+            font-size: 28px;
             cursor: pointer;
             font-weight: 600;
             transition: transform 0.2s;
             flex: 1;
-            max-width: 140px;
+            max-width: 220px;
         }
 
         .modal-btn:active {
@@ -423,13 +458,13 @@
         .send-drawing-btn {
             background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
             color: white;
-            box-shadow: 0 3px 12px rgba(33, 150, 243, 0.4);
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
         }
 
         .clear-btn {
             background: linear-gradient(135deg, #FF6B6B 0%, #EE5A52 100%);
             color: white;
-            box-shadow: 0 3px 12px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
         }
     </style>
 </head>
@@ -447,12 +482,16 @@
 
         <div class="input-area">
             <button class="btn photo-btn" id="photoBtn">📷</button>
+            <button class="btn video-btn" id="videoBtn">🎥</button>
+            <button class="btn audio-btn" id="audioBtn">🎵</button>
             <button class="btn draw-btn" id="drawBtn">✏️</button>
             <div class="input-wrapper">
                 <input type="text" id="messageInput" placeholder="Message" autocomplete="off" />
             </div>
             <button class="btn" id="sendBtn">➤</button>
             <input type="file" id="photoInput" class="photo-input" accept="image/*" />
+            <input type="file" id="videoInput" class="video-input" accept="video/*" />
+            <input type="file" id="audioInput" class="audio-input" accept="audio/*" />
         </div>
     </div>
 
@@ -496,8 +535,10 @@
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         const drawBtn = document.getElementById('drawBtn');
-        const photoBtn = document.getElementById('photoBtn');
-        const photoInput = document.getElementById('photoInput');
+        const mediaBtn = document.getElementById('mediaBtn');
+        const audioBtn = document.getElementById('audioBtn');
+        const mediaInput = document.getElementById('mediaInput');
+        const audioInput = document.getElementById('audioInput');
         const statusDiv = document.getElementById('status');
         const canvasModal = document.getElementById('canvasModal');
         const canvas = document.getElementById('drawCanvas');
@@ -576,6 +617,10 @@
             
             if (data.type === 'drawing' || data.type === 'photo') {
                 content += `<img src="${data.message}" class="drawing-preview" alt="${data.type === 'photo' ? 'Photo' : 'Drawing'}" onclick="openImageModal('${data.message}')" />`;
+            } else if (data.type === 'video') {
+                content += `<video controls class="video-preview"><source src="${data.message}" type="video/mp4"></video>`;
+            } else if (data.type === 'audio') {
+                content += `<audio controls class="audio-preview"><source src="${data.message}" type="audio/mpeg"></audio>`;
             } else {
                 content += `<div class="message-text">${data.message}`;
             }
@@ -584,7 +629,7 @@
             const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
             content += `<span class="message-time">${timeStr}</span>`;
             
-            if (data.type !== 'drawing' && data.type !== 'photo') {
+            if (data.type !== 'drawing' && data.type !== 'photo' && data.type !== 'video' && data.type !== 'audio') {
                 content += '</div>';
             }
             
@@ -688,62 +733,135 @@
             canvasModal.classList.add('active');
         });
 
-        // Photo button handler
-        photoBtn.addEventListener('click', () => {
-            photoInput.click();
+        // Media button handler (photos and videos)
+        mediaBtn.addEventListener('click', () => {
+            mediaInput.click();
         });
 
-        photoInput.addEventListener('change', (e) => {
+        mediaInput.addEventListener('change', (e) => {
             const file = e.target.files[0];
-            if (file && file.type.startsWith('image/')) {
+            if (!file) return;
+            
+            // Handle images
+            if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     const img = new Image();
                     img.onload = function() {
-                        // Create canvas to resize/optimize image
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Max dimensions for mobile
-                        const maxWidth = 1200;
-                        const maxHeight = 1200;
-                        
-                        let width = img.width;
-                        let height = img.height;
-                        
-                        // Calculate new dimensions
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height *= maxWidth / width;
-                                width = maxWidth;
+                        try {
+                            const canvas = document.createElement('canvas');
+                            const ctx = canvas.getContext('2d');
+                            
+                            const maxWidth = 1200;
+                            const maxHeight = 1200;
+                            
+                            let width = img.width;
+                            let height = img.height;
+                            
+                            if (width > height) {
+                                if (width > maxWidth) {
+                                    height *= maxWidth / width;
+                                    width = maxWidth;
+                                }
+                            } else {
+                                if (height > maxHeight) {
+                                    width *= maxHeight / height;
+                                    height = maxHeight;
+                                }
                             }
-                        } else {
-                            if (height > maxHeight) {
-                                width *= maxHeight / height;
-                                height = maxHeight;
+                            
+                            canvas.width = width;
+                            canvas.height = height;
+                            ctx.drawImage(img, 0, 0, width, height);
+                            
+                            const imageData = canvas.toDataURL('image/jpeg', 0.7);
+                            
+                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                ws.send(JSON.stringify({
+                                    user: username,
+                                    message: imageData,
+                                    type: 'photo'
+                                }));
                             }
+                        } catch (error) {
+                            console.error('Error processing image:', error);
+                            alert('Failed to process image. Please try a smaller photo.');
                         }
-                        
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        
-                        // Convert to base64 with compression
-                        const imageData = canvas.toDataURL('image/jpeg', 0.8);
-                        
-                        if (ws && ws.readyState === WebSocket.OPEN) {
-                            ws.send(JSON.stringify({
-                                user: username,
-                                message: imageData,
-                                type: 'photo'
-                            }));
-                        }
+                    };
+                    img.onerror = function() {
+                        console.error('Error loading image');
+                        alert('Failed to load image. Please try another photo.');
                     };
                     img.src = event.target.result;
                 };
+                reader.onerror = function() {
+                    console.error('Error reading file');
+                    alert('Failed to read file. Please try again.');
+                };
                 reader.readAsDataURL(file);
             }
-            photoInput.value = '';
+            // Handle videos
+            else if (file.type.startsWith('video/')) {
+                if (file.size > 50 * 1024 * 1024) {
+                    alert('Video is too large. Please choose a video under 50MB.');
+                    mediaInput.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const videoData = event.target.result;
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            user: username,
+                            message: videoData,
+                            type: 'video'
+                        }));
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('Error reading video file');
+                    alert('Failed to read video. Please try again.');
+                };
+                reader.readAsDataURL(file);
+            }
+            
+            mediaInput.value = '';
+        });
+
+        // Audio button handler
+        audioBtn.addEventListener('click', () => {
+            audioInput.click();
+        });
+
+        audioInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('audio/')) {
+                // Check file size (max 20MB for audio)
+                if (file.size > 20 * 1024 * 1024) {
+                    alert('Audio file is too large. Please choose a file under 20MB.');
+                    audioInput.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const audioData = event.target.result;
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            user: username,
+                            message: audioData,
+                            type: 'audio'
+                        }));
+                    }
+                };
+                reader.onerror = function() {
+                    console.error('Error reading audio file');
+                    alert('Failed to read audio. Please try again.');
+                };
+                reader.readAsDataURL(file);
+            }
+            audioInput.value = '';
         });
 
         cancelBtn.addEventListener('click', () => {
